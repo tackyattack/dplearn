@@ -23,40 +23,21 @@ import unittest
 
 
 def find_water(a):
-    x = [0] * len(a)  # feeler
-    h = [0] * len(a)  # height map for feeler
-    for i in range(1, len(a)-1):
-        cur = a[i]
-        l = a[i-1]
-        r = a[i+1]
-        # feeler that goes out to see how far it can trap
-        for u in range(cur, l+1):
-            z = 0
-            for p in range(i, len(a)):
-                if a[p] >= u:
-                    z = p-i
-                    break
-            if z >= x[i]:
-                x[i] = z
-                h[i] = u
-        print(i)
+    total_trapped = 0
+    map_size = len(a)
+    x = [0] * map_size
+    for i in range(1, map_size-1):
+        lmax = 0
+        rmax = 0
+        for j in range(0, i):
+            lmax = max(lmax, a[j])
+        for j in range(i, map_size):
+            rmax = max(rmax, a[j])
+        x[i] = max(min(lmax, rmax) - a[i], 0)
+        total_trapped = total_trapped + x[i]
     print(x)
-    print(h)
-    # now go back and fill in lower areas
-    i = 1
-    g = [0] * len(a)
-    total_count = 0
-    while i < len(a)-1:
-        if x[i] > 0:
-            level = h[i]
-            for p in range(i, i+x[i]):
-                i = p
-                g[i] = level - a[i]
-                total_count = total_count + g[i]
-        i = i + 1
-    print(g)
-    print(total_count)
-    return total_count
+    print(total_trapped)
+    return total_trapped
 
 
 class TestStringMethods(unittest.TestCase):
