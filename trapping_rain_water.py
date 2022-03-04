@@ -18,22 +18,44 @@
 
 import unittest
 
-# unoptimized solution
-# TODO: apply DP
+
+def dp_helper_lmax(a):
+    """
+    we want the max up to, but not including current
+    """
+    x = [0] * len(a)
+    for i in range(0, len(a)):
+        if i == 0:
+            z = 0
+        else:
+            z = max(x[i-1], a[i-1])
+        x[i] = z
+    return x
+
+
+def dp_helper_rmax(a):
+    """
+    we want the max up to, but not including current
+    """
+    x = [0] * len(a)
+    for i in range(0, len(a)):
+        j = len(a)-i-1
+        if j == len(a)-1:
+            z = 0
+        else:
+            z = max(x[j+1], a[j+1])
+        x[j] = z
+    return x
 
 
 def find_water(a):
     total_trapped = 0
     map_size = len(a)
     x = [0] * map_size
+    lmax_arr = dp_helper_lmax(a)
+    rmax_arr = dp_helper_rmax(a)
     for i in range(1, map_size-1):
-        lmax = 0
-        rmax = 0
-        for j in range(0, i):
-            lmax = max(lmax, a[j])
-        for j in range(i, map_size):
-            rmax = max(rmax, a[j])
-        x[i] = max(min(lmax, rmax) - a[i], 0)
+        x[i] = max(min(lmax_arr[i], rmax_arr[i]) - a[i], 0)
         total_trapped = total_trapped + x[i]
     print(x)
     print(total_trapped)
